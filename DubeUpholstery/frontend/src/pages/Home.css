@@ -1,0 +1,211 @@
+
+
+.hero {
+  min-height: 85vh;
+  /* Use an elegant modern subtle background */
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2)),
+              url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="%232c3e50"/></svg>'); /* Placeholder background color */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  align-items: center;
+}
+
+.hero-text {
+  max-width: 600px;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.85); /* Stronger glass effect to ensure contrast */
+}
+
+.hero-text h1 {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  color: var(--secondary);
+  margin-bottom: 1.5rem;
+}
+
+.hero-text p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1.5rem;
+}
+
+/* Trust Bar */
+.trust-bar {
+  background: white;
+  padding: 3rem 0;
+  box-shadow: var(--shadow-sm);
+  margin-top: -3rem;
+  position: relative;
+  z-index: 10;
+  border-radius: var(--radius-lg);
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.trust-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.trust-icon {
+  color: var(--primary);
+  width: 40px;
+  height: 40px;
+}
+
+.trust-info h4 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 0.2rem;
+}
+
+.trust-info p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Services Highlight */
+.section-padding {
+  padding: 5rem 2rem;
+}
+
+.section-header .subtitle {
+  color: var(--primary);
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.section-header h2 {
+  font-size: 2.5rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.header-line {
+  width: 80px;
+  height: 3px;
+  background: var(--primary);
+  margin: 0 auto;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3rem;
+}
+
+.service-card {
+  padding: 0;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.service-card:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-lg);
+}
+
+.service-img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+}
+
+.service-content {
+  padding: 2rem;
+}
+
+.service-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.service-content p {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.service-link {
+  color: var(--primary);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.service-link:hover {
+  color: var(--secondary);
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 6rem 0;
+  background: var(--primary-dark);
+}
+
+.cta-content {
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.cta-content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.cta-content p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+/* ─── Responsive: 501px–768px ─── */
+@media (max-width: 768px) {
+  .hero { min-height: 70vh; background-attachment: scroll; }
+  .hero-text { max-width: 100%; padding: 2rem 1.5rem; }
+  .hero-text h1 { font-size: 2.2rem; }
+  .hero-buttons { flex-direction: column; gap: 1rem; }
+
+  .trust-bar { margin-top: 0; border-radius: 0; }
+  .trust-item { min-width: calc(50% - 1rem); }
+
+  .section-header h2 { font-size: 2rem; }
+  .section-padding { padding: 3rem 1rem; }
+
+  .services-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .cta-content { padding: 2.5rem 1.5rem; }
+  .cta-content h2 { font-size: 1.9rem; }
+}
+
+/* ─── Below 501px ─── */
+@media (max-width: 500px) {
+  .hero-text h1 { font-size: 1.8rem; }
+  .trust-item { min-width: 100%; }
+  .services-grid { grid-template-columns: 1fr; }
+  .section-header h2 { font-size: 1.7rem; }
+  .cta-content h2 { font-size: 1.5rem; }
+}
+
