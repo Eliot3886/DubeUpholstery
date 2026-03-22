@@ -12,11 +12,13 @@ const AdminLogin = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
+    setIsLoading(true);
     if (username === 'dube' && password === 'dube2026!') {
       sessionStorage.setItem('isAdminAuthenticated', 'true');
       navigate('/admin/dashboard');
     } else {
       setError('Invalid credentials. Please try again.');
+      setIsLoading(false);
     }
   };
 
