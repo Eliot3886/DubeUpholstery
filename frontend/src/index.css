@@ -64,12 +64,19 @@ body {
 }
 
 .main-content {
-  padding-top: 80px; /* Offset for fixed navbar */
+  padding-top: 0;
+}
+
+/* Offset for fixed navbar on first element of each page */
+.main-content > *:first-child,
+.main-content > div > *:first-child {
+  padding-top: 95px;
 }
 
 @media (max-width: 968px) {
-  .main-content {
-    padding-top: 70px; /* Slightly smaller on mobile */
+  .main-content > *:first-child,
+  .main-content > div > *:first-child {
+    padding-top: 90px;
   }
 }
 
@@ -285,8 +292,8 @@ section {
   }
 
   .btn {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
+    padding: 0.8rem 1.6rem;
+    font-size: 1.05rem;
   }
 
   .glass-card {

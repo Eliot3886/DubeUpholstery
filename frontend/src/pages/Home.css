@@ -1,7 +1,7 @@
 
 
 .hero {
-  min-height: 85vh;
+  min-height: 80vh;
   /* Use an elegant modern subtle background */
   background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2)),
               url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="%232c3e50"/></svg>'); /* Placeholder background color */
@@ -9,7 +9,8 @@
   background-position: center;
   background-attachment: fixed;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  padding-top: 95px !important; /* Zero extra distance from navbar (matching the 95px offset) */
 }
 
 .hero-text {
@@ -180,10 +181,10 @@
 
 /* ─── Responsive: 501px–768px ─── */
 @media (max-width: 768px) {
-  .hero { min-height: 70vh; background-attachment: scroll; }
+  .hero { min-height: 70vh; background-attachment: scroll; padding-top: 90px !important; }
   .hero-text { max-width: 100%; padding: 2rem 1.5rem; }
   .hero-text h1 { font-size: 2.2rem; }
-  .hero-buttons { flex-direction: column; gap: 1rem; }
+  .hero-buttons { flex-direction: column; gap: 1.25rem; }
 
   .trust-bar { margin-top: 0; border-radius: 0; }
   .trust-item { min-width: calc(50% - 1rem); }

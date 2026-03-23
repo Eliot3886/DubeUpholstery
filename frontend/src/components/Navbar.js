@@ -14,8 +14,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-container container">
         <Link to="/" className="navbar-logo">
-          <span className="logo-text">DUBE</span>
-          <span className="logo-subtext">UPHOLSTERY</span>
+          <img src="/logo.jpeg" alt="Dube Upholstery" className="nav-logo-img" />
         </Link>
 
         {/* Desktop Menu */}
