@@ -251,9 +251,8 @@ const AdminDashboard = () => {
                 </span>
               )}
             </div>
-            <div className="admin-profile" onClick={() => setActiveTab('profile')} style={{ cursor: 'pointer' }}>
               {adminProfile && adminProfile.profile_picture ? (
-                <img src={adminProfile.profile_picture.startsWith('http') || adminProfile.profile_picture.startsWith('data:') ? adminProfile.profile_picture : `http://localhost:8000${adminProfile.profile_picture}`} alt="Admin" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
+                <img src={adminProfile.profile_picture.startsWith('http') || adminProfile.profile_picture.startsWith('data:') ? adminProfile.profile_picture : `https://dubeupholstery-1.onrender.com${adminProfile.profile_picture}`} alt="Admin" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
               ) : (
                 <div className="admin-avatar">A</div>
               )}
@@ -377,7 +376,7 @@ const AdminDashboard = () => {
                             <div className="d-flex align-items-center gap-2">
                               {quote.images && quote.images.length > 0 ? (
                                 quote.images.map((imgObj, idx) => {
-                                  const srcUrl = imgObj.image.startsWith('http') || imgObj.image.startsWith('data:') ? imgObj.image : `http://localhost:8000${imgObj.image}`;
+                                  const srcUrl = imgObj.image.startsWith('http') || imgObj.image.startsWith('data:') ? imgObj.image : `https://dubeupholstery-1.onrender.com${imgObj.image}`;
                                   return <img key={idx} src={srcUrl} alt="quote attach" style={{ width: 30, height: 30, objectFit: 'cover', borderRadius: 4, cursor: 'pointer', display: 'inline-block' }} onClick={() => setPreviewImage(srcUrl)} />
                                 })
 
@@ -879,7 +878,7 @@ const AdminDashboard = () => {
                   <div className="text-center mb-4">
                     <div className="position-relative d-inline-block">
                       {adminProfile?.profile_picture ? (
-                        <img src={adminProfile.profile_picture.startsWith('http') ? adminProfile.profile_picture : `http://localhost:8000${adminProfile.profile_picture}`} alt="Profile" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', border: '4px solid var(--primary)' }} />
+                        <img src={adminProfile.profile_picture.startsWith('http') ? adminProfile.profile_picture : `https://dubeupholstery-1.onrender.com${adminProfile.profile_picture}`} alt="Profile" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', border: '4px solid var(--primary)' }} />
                       ) : (
                         <div className="admin-avatar" style={{ width: 120, height: 120, fontSize: '3rem' }}>A</div>
                       )}

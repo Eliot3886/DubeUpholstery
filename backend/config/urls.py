@@ -23,12 +23,17 @@ from django.http import HttpResponse
 def home(request):
     return HttpResponse("API is running")
 
+from django.urls import re_path
+from django.views.static import serve
+
 urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
 ]    
 
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve media files in all environments (including production)
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+]
