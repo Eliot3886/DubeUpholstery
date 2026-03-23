@@ -259,7 +259,6 @@ const AdminDashboard = () => {
 
               <span className="admin-name">{adminProfile?.user?.first_name || 'Admin'}</span>
             </div>
-          </div>
         </header>
 
         {/* Dashboard Content area */}
