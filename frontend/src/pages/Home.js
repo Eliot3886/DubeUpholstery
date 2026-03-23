@@ -106,7 +106,7 @@ const Home = () => {
               {services.map((service) => (
                 <div className="service-card glass-card" key={`api-${service.id}`}>
                   <img
-                    src={service.img.startsWith('http') ? service.img : `https://dubeupholstery-1.onrender.com${service.img}`}
+                    src={service.img}
                     alt={service.title}
                     className="service-img"
                   />

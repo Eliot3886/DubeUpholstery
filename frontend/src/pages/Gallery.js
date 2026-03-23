@@ -37,17 +37,10 @@ const Gallery = () => {
 
   const allProjects = [
     ...dynamicProjects.map(dp => {
-      // Handle dynamic image URL - if it's a relative path from Django, prefix it
-      let imgUrl = dp.img;
-      if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
-        imgUrl = `https://dubeupholstery-1.onrender.com${imgUrl}`;
-      }
-
-      const isVideo = imgUrl && (imgUrl.endsWith('.mp4') || imgUrl.includes('youtube.com') || imgUrl.includes('youtu.be'));
+      const isVideo = dp.img && (dp.img.endsWith('.mp4') || dp.img.includes('youtube.com') || dp.img.includes('youtu.be'));
 
       return {
         ...dp,
-        img: imgUrl,
         uniqueId: `dyn-${dp.id}`,
         isVideo
       };

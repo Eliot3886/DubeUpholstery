@@ -68,7 +68,7 @@ const Services = () => {
               <div key={fabric.id} className="fabric-card glass-card">
                 <div className="fabric-image-container">
                   <img
-                    src={fabric.image.startsWith('http') ? fabric.image : `https://dubeupholstery-1.onrender.com${fabric.image}`}
+                    src={fabric.image}
                     alt={fabric.title || "Fabric"}
                     className="fabric-image"
                   />
@@ -98,15 +98,13 @@ const Services = () => {
         {/* Dynamic Custom Services (Newest First) */}
         {customServices.map((srv, idx) => {
           const isVideo = srv.img.endsWith('.mp4') || srv.img.includes('youtube.com') || srv.img.includes('youtu.be');
-          const finalUrl = srv.img.startsWith('http') || srv.img.startsWith('data:') ? srv.img : `https://dubeupholstery-1.onrender.com${srv.img}`;
-
           return (
             <div key={`custom-${srv.id}`} className="service-detail-card glass-card">
               <div className="service-image-container" style={{ flex: '1' }}>
                 {isVideo ? (
-                  <video src={finalUrl} className="service-detail-image" style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay muted loop controls playsInline />
+                  <video src={srv.img} className="service-detail-image" style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay muted loop controls playsInline />
                 ) : (
-                  <img src={finalUrl} alt={srv.title} className="service-detail-image" />
+                  <img src={srv.img} alt={srv.title} className="service-detail-image" />
                 )}
               </div>
 

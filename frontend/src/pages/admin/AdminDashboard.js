@@ -29,7 +29,8 @@ const AdminDashboard = () => {
   const [formError, setFormError] = useState('');
   const [previewImage, setPreviewImage] = useState(null);
   const [adminProfile, setAdminProfile] = useState(null);
-  const [editingItem, setEditingItem] = useState(null); // { type: 'gallery'|'service', item: obj }
+  const [editingItem, setEditingItem] = useState(null); // { type: 'gallery'|'service'|'fabric', item: obj }
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = React.useRef(null);
 
   const formatDateTime = (dateString) => {
@@ -69,7 +70,8 @@ const AdminDashboard = () => {
 
   const handleProfileUpload = async (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file || isSubmitting) return;
+    setIsSubmitting(true);
     const formData = new FormData();
     formData.append('profile_picture', file);
     formData.append('user', 1); // Mock user ID or proper auth if added
@@ -85,6 +87,8 @@ const AdminDashboard = () => {
       }
     } catch (error) {
       console.error("Failed to upload profile picture", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -252,7 +256,7 @@ const AdminDashboard = () => {
               )}
             </div>
               {adminProfile && adminProfile.profile_picture ? (
-                <img src={adminProfile.profile_picture.startsWith('http') || adminProfile.profile_picture.startsWith('data:') ? adminProfile.profile_picture : `https://dubeupholstery-1.onrender.com${adminProfile.profile_picture}`} alt="Admin" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
+                <img src={adminProfile.profile_picture} alt="Admin" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
               ) : (
                 <div className="admin-avatar">A</div>
               )}
@@ -375,8 +379,7 @@ const AdminDashboard = () => {
                             <div className="d-flex align-items-center gap-2">
                               {quote.images && quote.images.length > 0 ? (
                                 quote.images.map((imgObj, idx) => {
-                                  const srcUrl = imgObj.image.startsWith('http') || imgObj.image.startsWith('data:') ? imgObj.image : `https://dubeupholstery-1.onrender.com${imgObj.image}`;
-                                  return <img key={idx} src={srcUrl} alt="quote attach" style={{ width: 30, height: 30, objectFit: 'cover', borderRadius: 4, cursor: 'pointer', display: 'inline-block' }} onClick={() => setPreviewImage(srcUrl)} />
+                                  return <img key={idx} src={imgObj.image} alt="quote attach" style={{ width: 30, height: 30, objectFit: 'cover', borderRadius: 4, cursor: 'pointer', display: 'inline-block' }} onClick={() => setPreviewImage(imgObj.image)} />
                                 })
 
                               ) : (
@@ -386,14 +389,22 @@ const AdminDashboard = () => {
                           </td>
                           <td data-label="Received">{formatDateTime(quote.date)}</td>
                           <td data-label="Action">
-                            <button className="icon-btn text-muted hover-primary" onClick={async () => {
-                              try {
-                                await fetch(`https://dubeupholstery-1.onrender.com/api/quotes/${quote.id}/`, { method: 'DELETE' });
-                                setQuotes(quotes.filter(q => q.id !== quote.id));
-                              } catch (e) {
-                                console.error(e);
-                              }
-                            }}>
+                            <button 
+                              className="icon-btn text-muted hover-primary" 
+                              disabled={isSubmitting}
+                              onClick={async () => {
+                                if (isSubmitting) return;
+                                setIsSubmitting(true);
+                                try {
+                                  await fetch(`https://dubeupholstery-1.onrender.com/api/quotes/${quote.id}/`, { method: 'DELETE' });
+                                  setQuotes(quotes.filter(q => q.id !== quote.id));
+                                } catch (e) {
+                                  console.error(e);
+                                } finally {
+                                  setIsSubmitting(false);
+                                }
+                              }}
+                            >
                               <Trash2 size={18} className="text-danger" />
                             </button>
                           </td>
@@ -438,14 +449,22 @@ const AdminDashboard = () => {
                           </td>
                           <td data-label="Received" className="text-muted">{formatDateTime(contact.date)}</td>
                           <td data-label="Action">
-                            <button className="icon-btn text-danger hover-primary" onClick={async () => {
-                              try {
-                                await fetch(`https://dubeupholstery-1.onrender.com/api/contacts/${contact.id}/`, { method: 'DELETE' });
-                                setContacts(contacts.filter(c => c.id !== contact.id));
-                              } catch (e) {
-                                console.error(e);
-                              }
-                            }}>
+                            <button 
+                              className="icon-btn text-danger hover-primary" 
+                              disabled={isSubmitting}
+                              onClick={async () => {
+                                if (isSubmitting) return;
+                                setIsSubmitting(true);
+                                try {
+                                  await fetch(`https://dubeupholstery-1.onrender.com/api/contacts/${contact.id}/`, { method: 'DELETE' });
+                                  setContacts(contacts.filter(c => c.id !== contact.id));
+                                } catch (e) {
+                                  console.error(e);
+                                } finally {
+                                  setIsSubmitting(false);
+                                }
+                              }}
+                            >
                               <Trash2 size={18} />
                             </button>
                           </td>
@@ -492,45 +511,53 @@ const AdminDashboard = () => {
                       {editingItem?.type === 'gallery' && <small className="text-muted">Leave blank to keep current image</small>}
                     </div>
                   </div>
-                  <button className="btn btn-primary" onClick={async () => {
-                    const title = document.getElementById('gal-title').value;
-                    const cat = document.getElementById('gal-category').value;
-                    const fileInput = document.getElementById('gal-file');
+                  <button 
+                    className="btn btn-primary" 
+                    disabled={isSubmitting}
+                    onClick={async () => {
+                      if (isSubmitting) return;
+                      const title = document.getElementById('gal-title').value;
+                      const cat = document.getElementById('gal-category').value;
+                      const fileInput = document.getElementById('gal-file');
 
-                    if (title && (fileInput.files.length > 0 || editingItem)) {
-                      try {
-                        const formData = new FormData();
-                        formData.append('title', title);
-                        formData.append('category', cat);
-                        if (fileInput.files[0]) formData.append('img', fileInput.files[0]);
+                      if (title && (fileInput.files.length > 0 || editingItem)) {
+                        setIsSubmitting(true);
+                        try {
+                          const formData = new FormData();
+                          formData.append('title', title);
+                          formData.append('category', cat);
+                          if (fileInput.files[0]) formData.append('img', fileInput.files[0]);
 
-                        const url = editingItem ? `https://dubeupholstery-1.onrender.com/api/gallery/${editingItem.item.id}/` : 'https://dubeupholstery-1.onrender.com/api/gallery/';
-                        const method = editingItem ? 'PATCH' : 'POST';
+                          const url = editingItem ? `https://dubeupholstery-1.onrender.com/api/gallery/${editingItem.item.id}/` : 'https://dubeupholstery-1.onrender.com/api/gallery/';
+                          const method = editingItem ? 'PATCH' : 'POST';
 
-                        const response = await fetch(url, {
-                          method: method,
-                          body: formData
-                        });
-                        if (response.ok) {
-                          const result = await response.json();
-                          if (editingItem) {
-                            setGallery(gallery.map(g => g.id === result.id ? result : g));
-                            setEditingItem(null);
-                          } else {
-                            setGallery([result, ...gallery]);
+                          const response = await fetch(url, {
+                            method: method,
+                            body: formData
+                          });
+                          if (response.ok) {
+                            const result = await response.json();
+                            if (editingItem) {
+                              setGallery(gallery.map(g => g.id === result.id ? result : g));
+                              setEditingItem(null);
+                            } else {
+                              setGallery([result, ...gallery]);
+                            }
+                            document.getElementById('gal-title').value = '';
+                            fileInput.value = '';
+                            setFormError('');
                           }
-                          document.getElementById('gal-title').value = '';
-                          fileInput.value = '';
-                          setFormError('');
+                        } catch (e) {
+                          console.error(e);
+                        } finally {
+                          setIsSubmitting(false);
                         }
-                      } catch (e) {
-                        console.error(e);
+                      } else {
+                        setFormError("Please fill title and select an image file.");
                       }
-                    } else {
-                      setFormError("Please fill title and select an image file.");
-                    }
-                  }}>
-                    {editingItem?.type === 'gallery' ? 'Update Item' : 'Add to Gallery'}
+                    }}
+                  >
+                    {isSubmitting ? 'Processing...' : (editingItem?.type === 'gallery' ? 'Update Item' : 'Add to Gallery')}
                   </button>
                   {formError && activeTab === 'gallery' && <p className="text-danger mt-2">{formError}</p>}
                 </div>
@@ -557,10 +584,10 @@ const AdminDashboard = () => {
                           <td data-label="Preview">
                             {item.img ? (
                               <img
-                                src={item.img.startsWith('http') || item.img.startsWith('data:') ? item.img : `https://dubeupholstery-1.onrender.com${item.img}`}
+                                src={item.img}
                                 alt={item.title}
                                 style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px', cursor: 'pointer', display: 'inline-block' }}
-                                onClick={() => setPreviewImage(item.img.startsWith('http') || item.img.startsWith('data:') ? item.img : `https://dubeupholstery-1.onrender.com${item.img}`)}
+                                onClick={() => setPreviewImage(item.img)}
                               />
                             ) : (
                               <div style={{ width: '60px', height: '60px', background: '#eee', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ImageIcon size={20} className="text-muted" /></div>
@@ -578,14 +605,22 @@ const AdminDashboard = () => {
                               }}>
                                 <Pencil size={18} />
                               </button>
-                              <button className="icon-btn text-danger" onClick={async () => {
-                                try {
-                                  await fetch(`https://dubeupholstery-1.onrender.com/api/gallery/${item.id}/`, { method: 'DELETE' });
-                                  setGallery(gallery.filter(g => g.id !== item.id));
-                                } catch (e) {
-                                  console.error(e);
-                                }
-                              }}>
+                              <button 
+                                className="icon-btn text-danger" 
+                                disabled={isSubmitting}
+                                onClick={async () => {
+                                  if (isSubmitting) return;
+                                  setIsSubmitting(true);
+                                  try {
+                                    await fetch(`https://dubeupholstery-1.onrender.com/api/gallery/${item.id}/`, { method: 'DELETE' });
+                                    setGallery(gallery.filter(g => g.id !== item.id));
+                                  } catch (e) {
+                                    console.error(e);
+                                  } finally {
+                                    setIsSubmitting(false);
+                                  }
+                                }}
+                              >
                                 <Trash2 size={18} />
                               </button>
                             </div>
@@ -627,46 +662,54 @@ const AdminDashboard = () => {
                       <textarea className="form-control" rows="3" placeholder="Service Description" id="srv-desc" defaultValue={editingItem?.type === 'service' ? editingItem.item.desc : ''}></textarea>
                     </div>
                   </div>
-                  <button className="btn btn-primary" onClick={async () => {
-                    const title = document.getElementById('srv-title').value;
-                    const fileInput = document.getElementById('srv-file');
-                    const desc = document.getElementById('srv-desc').value;
+                  <button 
+                    className="btn btn-primary" 
+                    disabled={isSubmitting}
+                    onClick={async () => {
+                      if (isSubmitting) return;
+                      const title = document.getElementById('srv-title').value;
+                      const fileInput = document.getElementById('srv-file');
+                      const desc = document.getElementById('srv-desc').value;
 
-                    if (title && (fileInput.files.length > 0 || editingItem) && desc) {
-                      try {
-                        const formData = new FormData();
-                        formData.append('title', title);
-                        formData.append('desc', desc);
-                        if (fileInput.files[0]) formData.append('img', fileInput.files[0]);
+                      if (title && (fileInput.files.length > 0 || editingItem) && desc) {
+                        setIsSubmitting(true);
+                        try {
+                          const formData = new FormData();
+                          formData.append('title', title);
+                          formData.append('desc', desc);
+                          if (fileInput.files[0]) formData.append('img', fileInput.files[0]);
 
-                        const url = editingItem ? `https://dubeupholstery-1.onrender.com/api/services/${editingItem.item.id}/` : 'https://dubeupholstery-1.onrender.com/api/services/';
-                        const method = editingItem ? 'PATCH' : 'POST';
+                          const url = editingItem ? `https://dubeupholstery-1.onrender.com/api/services/${editingItem.item.id}/` : 'https://dubeupholstery-1.onrender.com/api/services/';
+                          const method = editingItem ? 'PATCH' : 'POST';
 
-                        const response = await fetch(url, {
-                          method: method,
-                          body: formData
-                        });
-                        if (response.ok) {
-                          const result = await response.json();
-                          if (editingItem) {
-                            setServices(services.map(s => s.id === result.id ? result : s));
-                            setEditingItem(null);
-                          } else {
-                            setServices([result, ...services]);
+                          const response = await fetch(url, {
+                            method: method,
+                            body: formData
+                          });
+                          if (response.ok) {
+                            const result = await response.json();
+                            if (editingItem) {
+                              setServices(services.map(s => s.id === result.id ? result : s));
+                              setEditingItem(null);
+                            } else {
+                              setServices([result, ...services]);
+                            }
+                            document.getElementById('srv-title').value = '';
+                            fileInput.value = '';
+                            document.getElementById('srv-desc').value = '';
+                            setFormError('');
                           }
-                          document.getElementById('srv-title').value = '';
-                          fileInput.value = '';
-                          document.getElementById('srv-desc').value = '';
-                          setFormError('');
+                        } catch (e) {
+                          console.error(e);
+                        } finally {
+                          setIsSubmitting(false);
                         }
-                      } catch (e) {
-                        console.error(e);
+                      } else {
+                        setFormError("Please fill all fields for the service.");
                       }
-                    } else {
-                      setFormError("Please fill all fields for the service.");
-                    }
-                  }}>
-                    {editingItem?.type === 'service' ? 'Update Service' : 'Add Service'}
+                    }}
+                  >
+                    {isSubmitting ? 'Processing...' : (editingItem?.type === 'service' ? 'Update Service' : 'Add Service')}
                   </button>
                   {formError && activeTab === 'services' && <p className="text-danger mt-2">{formError}</p>}
                 </div>
@@ -695,10 +738,10 @@ const AdminDashboard = () => {
                               <span className="badge badge-primary">Video</span> :
                               srv.img ? (
                                 <img
-                                  src={srv.img.startsWith('http') || srv.img.startsWith('data:') ? srv.img : `https://dubeupholstery-1.onrender.com${srv.img}`}
+                                  src={srv.img}
                                   alt={srv.title}
                                   style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px', cursor: 'pointer', display: 'inline-block' }}
-                                  onClick={() => setPreviewImage(srv.img.startsWith('http') || srv.img.startsWith('data:') ? srv.img : `https://dubeupholstery-1.onrender.com${srv.img}`)}
+                                  onClick={() => setPreviewImage(srv.img)}
                                 />
                               ) : (
                                 <div style={{ width: '60px', height: '60px', background: '#eee', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ImageIcon size={20} className="text-muted" /></div>
@@ -717,14 +760,22 @@ const AdminDashboard = () => {
                               }}>
                                 <Pencil size={18} />
                               </button>
-                              <button className="icon-btn text-danger" onClick={async () => {
-                                try {
-                                  await fetch(`https://dubeupholstery-1.onrender.com/api/services/${srv.id}/`, { method: 'DELETE' });
-                                  setServices(services.filter(s => s.id !== srv.id));
-                                } catch (e) {
-                                  console.error(e);
-                                }
-                              }}>
+                              <button 
+                                className="icon-btn text-danger" 
+                                disabled={isSubmitting}
+                                onClick={async () => {
+                                  if (isSubmitting) return;
+                                  setIsSubmitting(true);
+                                  try {
+                                    await fetch(`https://dubeupholstery-1.onrender.com/api/services/${srv.id}/`, { method: 'DELETE' });
+                                    setServices(services.filter(s => s.id !== srv.id));
+                                  } catch (e) {
+                                    console.error(e);
+                                  } finally {
+                                    setIsSubmitting(false);
+                                  }
+                                }}
+                              >
                                 <Trash2 size={18} />
                               </button>
                             </div>
@@ -766,46 +817,54 @@ const AdminDashboard = () => {
                       <textarea className="form-control" rows="3" placeholder="Fabric Description" id="fab-desc" defaultValue={editingItem?.type === 'fabric' ? editingItem.item.description : ''}></textarea>
                     </div>
                   </div>
-                  <button className="btn btn-primary" onClick={async () => {
-                    const title = document.getElementById('fab-title').value;
-                    const fileInput = document.getElementById('fab-file');
-                    const desc = document.getElementById('fab-desc').value;
+                  <button 
+                    className="btn btn-primary" 
+                    disabled={isSubmitting}
+                    onClick={async () => {
+                      if (isSubmitting) return;
+                      const title = document.getElementById('fab-title').value;
+                      const fileInput = document.getElementById('fab-file');
+                      const desc = document.getElementById('fab-desc').value;
 
-                    if ((fileInput.files.length > 0 || editingItem)) {
-                      try {
-                        const formData = new FormData();
-                        if (title) formData.append('title', title);
-                        if (desc) formData.append('description', desc);
-                        if (fileInput.files[0]) formData.append('image', fileInput.files[0]);
+                      if ((fileInput.files.length > 0 || editingItem)) {
+                        setIsSubmitting(true);
+                        try {
+                          const formData = new FormData();
+                          if (title) formData.append('title', title);
+                          if (desc) formData.append('description', desc);
+                          if (fileInput.files[0]) formData.append('image', fileInput.files[0]);
 
-                        const url = editingItem ? `https://dubeupholstery-1.onrender.com/api/fabrics/${editingItem.item.id}/` : 'https://dubeupholstery-1.onrender.com/api/fabrics/';
-                        const method = editingItem ? 'PATCH' : 'POST';
+                          const url = editingItem ? `https://dubeupholstery-1.onrender.com/api/fabrics/${editingItem.item.id}/` : 'https://dubeupholstery-1.onrender.com/api/fabrics/';
+                          const method = editingItem ? 'PATCH' : 'POST';
 
-                        const response = await fetch(url, {
-                          method: method,
-                          body: formData
-                        });
-                        if (response.ok) {
-                          const result = await response.json();
-                          if (editingItem) {
-                            setFabrics(fabrics.map(f => f.id === result.id ? result : f));
-                            setEditingItem(null);
-                          } else {
-                            setFabrics([result, ...fabrics]);
+                          const response = await fetch(url, {
+                            method: method,
+                            body: formData
+                          });
+                          if (response.ok) {
+                            const result = await response.json();
+                            if (editingItem) {
+                              setFabrics(fabrics.map(f => f.id === result.id ? result : f));
+                              setEditingItem(null);
+                            } else {
+                              setFabrics([result, ...fabrics]);
+                            }
+                            document.getElementById('fab-title').value = '';
+                            fileInput.value = '';
+                            document.getElementById('fab-desc').value = '';
+                            setFormError('');
                           }
-                          document.getElementById('fab-title').value = '';
-                          fileInput.value = '';
-                          document.getElementById('fab-desc').value = '';
-                          setFormError('');
+                        } catch (e) {
+                          console.error(e);
+                        } finally {
+                          setIsSubmitting(false);
                         }
-                      } catch (e) {
-                        console.error(e);
+                      } else {
+                        setFormError("Please select a fabric image.");
                       }
-                    } else {
-                      setFormError("Please select a fabric image.");
-                    }
-                  }}>
-                    {editingItem?.type === 'fabric' ? 'Update Fabric' : 'Add Fabric'}
+                    }}
+                  >
+                    {isSubmitting ? 'Processing...' : (editingItem?.type === 'fabric' ? 'Update Fabric' : 'Add Fabric')}
                   </button>
                   {formError && activeTab === 'fabrics' && <p className="text-danger mt-2">{formError}</p>}
                 </div>
@@ -830,7 +889,7 @@ const AdminDashboard = () => {
                       {fabrics.map((fab, idx) => (
                         <tr key={idx}>
                           <td data-label="Preview">
-                            <img src={fab.image.startsWith('http') ? fab.image : `https://dubeupholstery-1.onrender.com${fab.image}`} alt={fab.title} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px', cursor: 'pointer', display: 'inline-block' }} onClick={() => setPreviewImage(fab.image.startsWith('http') ? fab.image : `https://dubeupholstery-1.onrender.com${fab.image}`)} />
+                            <img src={fab.image} alt={fab.title} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px', cursor: 'pointer', display: 'inline-block' }} onClick={() => setPreviewImage(fab.image)} />
                           </td>
                           <td data-label="Title" className="font-weight-600">{fab.title || 'N/A'}</td>
                           <td data-label="Description" style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{fab.description || 'N/A'}</td>
@@ -843,14 +902,22 @@ const AdminDashboard = () => {
                               }}>
                                 <Pencil size={18} />
                               </button>
-                              <button className="icon-btn text-danger" onClick={async () => {
-                                try {
-                                  await fetch(`https://dubeupholstery-1.onrender.com/api/fabrics/${fab.id}/`, { method: 'DELETE' });
-                                  setFabrics(fabrics.filter(f => f.id !== fab.id));
-                                } catch (e) {
-                                  console.error(e);
-                                }
-                              }}>
+                              <button 
+                                className="icon-btn text-danger" 
+                                disabled={isSubmitting}
+                                onClick={async () => {
+                                  if (isSubmitting) return;
+                                  setIsSubmitting(true);
+                                  try {
+                                    await fetch(`https://dubeupholstery-1.onrender.com/api/fabrics/${fab.id}/`, { method: 'DELETE' });
+                                    setFabrics(fabrics.filter(f => f.id !== fab.id));
+                                  } catch (e) {
+                                    console.error(e);
+                                  } finally {
+                                    setIsSubmitting(false);
+                                  }
+                                }}
+                              >
                                 <Trash2 size={18} />
                               </button>
                             </div>
@@ -877,7 +944,7 @@ const AdminDashboard = () => {
                   <div className="text-center mb-4">
                     <div className="position-relative d-inline-block">
                       {adminProfile?.profile_picture ? (
-                        <img src={adminProfile.profile_picture.startsWith('http') ? adminProfile.profile_picture : `https://dubeupholstery-1.onrender.com${adminProfile.profile_picture}`} alt="Profile" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', border: '4px solid var(--primary)' }} />
+                        <img src={adminProfile.profile_picture} alt="Profile" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', border: '4px solid var(--primary)' }} />
                       ) : (
                         <div className="admin-avatar" style={{ width: 120, height: 120, fontSize: '3rem' }}>A</div>
                       )}
@@ -905,40 +972,50 @@ const AdminDashboard = () => {
                     <input type="password" class="form-control" id="prof-pass" placeholder="••••••••" />
                   </div>
 
-                  <button className="btn btn-primary w-100" onClick={async () => {
-                    const username = document.getElementById('prof-username').value;
-                    const name = document.getElementById('prof-name').value;
-                    const email = document.getElementById('prof-email').value;
-                    const pass = document.getElementById('prof-pass').value;
+                  <button 
+                    className="btn btn-primary w-100" 
+                    disabled={isSubmitting}
+                    onClick={async () => {
+                      if (isSubmitting) return;
+                      const username = document.getElementById('prof-username').value;
+                      const name = document.getElementById('prof-name').value;
+                      const email = document.getElementById('prof-email').value;
+                      const pass = document.getElementById('prof-pass').value;
 
-                    try {
-                      const payload = {
-                        user: {
-                          username: username,
-                          first_name: name,
-                          email: email,
-                          password: pass || undefined
+                      setIsSubmitting(true);
+                      try {
+                        const payload = {
+                          user: {
+                            username: username,
+                            first_name: name,
+                            email: email,
+                            password: pass || undefined
+                          }
+                        };
+                        const response = await fetch(`https://dubeupholstery-1.onrender.com/api/profiles/${adminProfile.id}/`, {
+                          method: 'PATCH',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(payload)
+                        });
+                        if (response.ok) {
+                          const updated = await response.json();
+                          setAdminProfile(updated);
+                          alert("Profile updated successfully!");
+                          if (pass) document.getElementById('prof-pass').value = '';
+                        } else {
+                          const errData = await response.json();
+                          alert(`Failed to update profile: ${JSON.stringify(errData)}`);
                         }
-                      };
-                      const response = await fetch(`https://dubeupholstery-1.onrender.com/api/profiles/${adminProfile.id}/`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                      });
-                      if (response.ok) {
-                        const updated = await response.json();
-                        setAdminProfile(updated);
-                        alert("Profile updated successfully!");
-                        if (pass) document.getElementById('prof-pass').value = '';
-                      } else {
-                        const errData = await response.json();
-                        alert(`Failed to update profile: ${JSON.stringify(errData)}`);
+                      } catch (e) {
+                        console.error(e);
+                        alert("Failed to update profile due to network error");
+                      } finally {
+                        setIsSubmitting(false);
                       }
-                    } catch (e) {
-                      console.error(e);
-                      alert("Failed to update profile due to network error");
-                    }
-                  }}>Save Changes</button>
+                    }}
+                  >
+                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                  </button>
                 </div>
               </div>
             </div>
