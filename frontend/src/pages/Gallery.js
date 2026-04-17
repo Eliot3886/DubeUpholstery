@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Gallery.css';
 import sofaRepairImg from '../assets/images/sofa_repair.jpeg';
 import customDesignImg from '../assets/images/sofa.jpeg';
@@ -18,39 +18,10 @@ const projects = [
 
 const Gallery = () => {
   const [filter, setFilter] = useState('All');
-  const [dynamicProjects, setDynamicProjects] = useState([]);
-
-  useEffect(() => {
-    const fetchGallery = async () => {
-      try {
-        const response = await fetch('https://dubeupholstery-1.onrender.com/api/gallery/');
-        if (response.ok) {
-          const data = await response.json();
-          setDynamicProjects(data);
-        }
-      } catch (error) {
-        console.error("Failed to load gallery", error);
-      }
-    };
-    fetchGallery();
-  }, []);
-
-  const allProjects = [
-    ...dynamicProjects.map(dp => {
-      const isVideo = dp.img && (dp.img.endsWith('.mp4') || dp.img.includes('youtube.com') || dp.img.includes('youtu.be'));
-
-      return {
-        ...dp,
-        uniqueId: `dyn-${dp.id}`,
-        isVideo
-      };
-    }),
-    ...projects.map(p => ({ ...p, uniqueId: `static-${p.id}` }))
-  ];
 
   const filteredProjects = filter === 'All'
-    ? allProjects
-    : allProjects.filter(p => p.category && p.category.trim().toLowerCase() === filter.trim().toLowerCase());
+    ? projects
+    : projects.filter(p => p.category && p.category.trim().toLowerCase() === filter.trim().toLowerCase());
 
   return (
     <div className="gallery-page animate-fade-in">
@@ -78,15 +49,11 @@ const Gallery = () => {
         <div className="gallery-grid">
           {filteredProjects.map(project => (
             <div
-              key={project.uniqueId}
+              key={project.id}
               className="gallery-item glass-card"
               data-category={project.category}
             >
-              {project.isVideo ? (
-                <video src={project.img} className="gallery-img" autoPlay muted loop />
-              ) : (
-                <img src={project.img} alt={project.title} className="gallery-img" />
-              )}
+              <img src={project.img} alt={project.title} className="gallery-img" />
               <div className="gallery-info">
                 <h3>{project.title}</h3>
                 <span className="category-tag">{project.category}</span>

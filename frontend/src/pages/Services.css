@@ -1,22 +1,18 @@
 .page-header {
-  background: var(--admin-bg);
-  background-size: cover;
-  background-position: center;
-  color: white;
-  padding: 6rem 2rem;
+  background: transparent;
+  padding: 1rem 2rem 0rem 2rem;
   text-align: center;
-  margin-top: -80px;
 }
 
 .page-header h1 {
   font-size: 3.5rem;
   color: var(--primary);
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .page-header p {
   font-size: 1.25rem;
-  color: var(--border);
+  color: #000;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -152,11 +148,11 @@
 /* ─── Responsive Utilities ─── */
 @media (max-width: 968px) {
   .page-header {
-    padding: 5rem 1.5rem 3rem;
+    padding: 2.5rem 1.5rem 1rem;
   }
   
   .page-header h1 { font-size: 2.8rem; }
-  .page-header p  { font-size: 1.1rem; }
+  .page-header p  { font-size: 1.1rem; color: #000; }
 
   .service-detail-card,
   .service-detail-card.reverse {
@@ -191,9 +187,9 @@
 }
 
 @media (max-width: 576px) {
-  .page-header { padding: 4rem 1rem 2.5rem; }
+  .page-header { padding: 2rem 1rem 1rem; }
   .page-header h1 { font-size: 2.2rem; }
-  .page-header p { font-size: 1rem; }
+  .page-header p { font-size: 1rem; color: #000; }
 
   /* Compact service cards for mobile */
   .service-detail-card {

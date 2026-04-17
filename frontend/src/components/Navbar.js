@@ -29,17 +29,17 @@ const Navbar = () => {
               <Phone size={18} />
               <span>Call Us</span>
             </a>
-            <Link to="/quote" className="btn btn-primary nav-cta">
+            <a href="https://wa.me/27647083636?text=Welcome%20to%20Dube%20Upholstery%20and%20You%20are%20free%20to%20request%20a%20quotation%20on%20Sofas%20%2C%20Car%20Seat%20repair%2C%20Headboards%2C%20Car%20triming%20or%20others." className="btn btn-primary nav-cta" target="_blank" rel="noopener noreferrer">
               Get a Quote
-            </Link>
+            </a>
           </div>
         </div>
 
         {/* Mobile Get Quote Button (Always visible on top right for mobile) */}
         <div className="mobile-cta d-md-none">
-          <Link to="/quote" className="btn btn-primary btn-sm mobile-quote-btn">
-            Get Quote
-          </Link>
+          <a href="https://wa.me/27647083636?text=Welcome%20to%20Dube%20Upholstery%20and%20You%20are%20free%20to%20request%20a%20quotation%20on%20Sofas%20%2C%20Car%20Seat%20repair%2C%20Headboards%2C%20Car%20triming%20or%20others." className="btn btn-primary btn-sm mobile-quote-btn" target="_blank" rel="noopener noreferrer">
+            Get a Quote
+          </a>
         </div>
       </div>
     </nav>

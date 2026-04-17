@@ -49,14 +49,27 @@
 }
 
 .social-icon:hover {
-  background: var(--primary);
-  color: white;
   transform: translateY(-3px);
 }
 
-.social-icon.tiktok-hover:hover {
+.facebook-icon {
+  background: #1877F2;
+  color: white;
+}
+
+.facebook-icon:hover {
+  background: white;
+  color: #1877F2;
+}
+
+.tiktok-icon {
   background: #000;
-  color: #fff;
+  color: white;
+}
+
+.tiktok-icon:hover {
+  background: white;
+  color: #000;
   box-shadow: 2px 2px 0px #00f2ea, -2px -2px 0px #ff0050, 0 5px 15px rgba(0,0,0,0.3);
 }
 
