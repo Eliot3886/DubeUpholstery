@@ -1,6 +1,5 @@
 import React from 'react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import './Services.css';
 import sofaRepairImg from '../assets/images/sofa_repair.jpeg';
 import customDesignImg from '../assets/images/sofa.jpeg';
